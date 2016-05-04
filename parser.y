@@ -1,9 +1,23 @@
 %{
 	#include <stdio.h>
+	#include "header.h"
+
+	clause_list* ziel_claus_list = NULL;
+	clause_list* regel_claus_list = NULL;
 
 	extern int yyerror(char* err);
 	extern FILE* yyin;
 %}
+
+%union{
+	char* name;
+	struct clause* claus;
+	struct atom* atm;
+	struct term_list* termLst;
+	struct term* trm;
+	struct body* bd;
+	
+}
 
 
 %start formseq
@@ -20,6 +34,7 @@
 %token FALSE
 %token NEWLINE
 %token ERROR
+%token exit_command
 
 %%
 
@@ -30,19 +45,17 @@ formseq: /* Empty */
 
 form: left IMPL right
 
-right: molec | FALSE
+right: atom | FALSE
 
 left: conj | TRUE
 
-conj: molec | conj AND molec
+conj: atom | conj AND atom
 
-molec: atom | term
-
-atom: CONST | RELATION OPENPAR terms CLOSEPAR
+atom: RELATION | RELATION OPENPAR terms CLOSEPAR
 
 terms: term | term COMMA terms
 
-term: CONST | FUNCT OPENPAR terms CLOSEPAR
+term: CONST {printf("\nConstant:\t%s\n", $<name>1);$<trm>$=toTerm($<name>1, NULL);}| FUNCT OPENPAR terms CLOSEPAR
 
 %%
 

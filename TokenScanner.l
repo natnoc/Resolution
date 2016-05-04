@@ -1,7 +1,8 @@
 %option noyywrap
 
 %{
-   #include "parser.tab.h"
+	#include "parser.tab.h"
+	#include "header.h"
 %}
 
 DIGIT 	  [0-9]
@@ -20,15 +21,16 @@ FALSE 	"FALSE"|"false"
 %%
 {CONST}  {
   printf("CONST: %s\n",yytext);
-  return CONST;
+   yylval.name = strdup(yytext); return(CONST);
 }
+
 {FUNCT} {
   printf("FUNCT: %s\n",yytext);
-  return FUNCT;
+	 yylval.name = strdup(yytext); return(FUNCT);
 }
 {RELATION} {
   printf("RELATION: %s\n",yytext);
-  return RELATION;
+	yylval.name = strdup(yytext); return(RELATION);
 }
 {COMMA} {
   return COMMA;
@@ -65,5 +67,6 @@ FALSE 	"FALSE"|"false"
 . {
 	return ERROR;
 }
+
 
 %%
