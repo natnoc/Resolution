@@ -21,7 +21,7 @@ atom* toAtom(char* prSym, term_list* trmList){
 	atm->predSym = prSym;
 	atm->trm_lst = trmList;
 
-	return atm;	
+	return atm;
 }
 
 term_list* toTermList(term* trm, term_list* next){
@@ -62,4 +62,17 @@ body* tobody(atom* head, body* bd){
 	boy->next = bd;
 
 	return boy;
+}
+
+char* print_term(term* trm) {
+	if (trm != NULL) {
+		printf("Term: %s\n", trm->fOrConst);
+	}
+}
+
+char* print_term_liste(term_list* trm_lst) {
+	while (trm_lst != NULL) {
+		print_term(trm_lst->trm);
+		trm_lst = trm_lst->next;
+	}
 }

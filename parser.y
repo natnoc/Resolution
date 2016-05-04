@@ -16,11 +16,11 @@
 	struct term_list* termLst;
 	struct term* trm;
 	struct body* bd;
-	
+
 }
 
 
-%start formseq
+%start start
 
 %token CONST
 %token FUNCT
@@ -38,6 +38,11 @@
 
 %%
 
+start: formseq {
+	printf("Start\n");
+
+}
+
 formseq: /* Empty */
     | NEWLINE formseq       {}
     | form  NEWLINE formseq {}
@@ -53,9 +58,19 @@ conj: atom | conj AND atom
 
 atom: RELATION | RELATION OPENPAR terms CLOSEPAR
 
-terms: term | term COMMA terms
+terms: term {
+		$<termLst>$=toTermList($<trm>$, NULL);
+		print_term_liste($<termLst>$);
+		}
+		| term COMMA terms
 
-term: CONST {printf("\nConstant:\t%s\n", $<name>1);$<trm>$=toTerm($<name>1, NULL);}| FUNCT OPENPAR terms CLOSEPAR
+term: CONST {
+			printf("\nConstant:\t%s\n", $<name>1);
+			$<trm>$=toTerm($<name>1, NULL);
+			print_term($<trm>$);
+		} |
+		FUNCT OPENPAR terms CLOSEPAR {
+		}
 
 %%
 
