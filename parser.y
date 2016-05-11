@@ -14,10 +14,8 @@
 	struct clause* claus;
 	struct atom* atm;
 	struct term_list* termLst;
-
 	struct term* trm;
 	struct body* bd;
-
 }
 
 
@@ -45,46 +43,73 @@ start: formseq {
 }
 
 formseq: /* Empty */
-    | NEWLINE formseq       {}
-    | form  NEWLINE formseq {}
+    | form  NEWLINE formseq {
+			clause_list* clsLst = toClauseList($<claus>1, ziel_claus_list);
+			ziel_claus_list = clsLst;
+		}
+		| NEWLINE formseq       {}
     | error NEWLINE formseq {};  /* After an error, start afresh */
 
-form: left IMPL right {}
+form: left IMPL right {
+		printf("\nFormel eingelesen!\n");
+
+		//Wenn linke Seite = true
+		if($<bd>1 == NULL) {
+
+		} else {
+			//Wenn rechte Seite = false
+			if ($<bd>3 == NULL) {
+
+			//Wenn beide Seiten Formeln enthalten
+			} else {
+
+			}
+		}
+		}
 
 right: atom {
-			//$<bd>$ = tobody($<atm>1, NULL);
-			//print_body($<bd>$);
+			$<bd>$ = tobody($<atm>1, NULL);
+			printf("\nRechts:\t");
+			print_body($<bd>$);
 		}
-		| FALSE {}
+		| FALSE {
+			printf("False");
+			$<bd>$ = NULL;
+		}
 
 left: conj {
-
-		} | TRUE {}
+			printf("\nLinks:\t");
+			$<claus>$ = toclause($<bd>1);
+			print_clause($<claus>$);
+		} | TRUE {
+			printf("True");
+			$<bd>$ = NULL;
+		}
 
 conj: atom {
 			$<bd>$ = tobody($<atm>1, NULL);
-			print_body($<bd>$);
+			//print_body($<bd>$);
 		}
 		| atom AND conj {
 			$<bd>$ = tobody($<atm>1, $<bd>3);
-			print_body($<bd>$);		
+			//print_body($<bd>$);
 		}
 
 atom: RELATION {
 			$<atm>$ = toAtom($<name>1, NULL);
-			print_atom($<atm>$);
+			//print_atom($<atm>$);
 		}
 		| RELATION OPENPAR terms CLOSEPAR {
 			$<atm>$ = toAtom($<name>1, $<termLst>3);
-			print_atom($<atm>$);
+			//print_atom($<atm>$);
 		}
 
 terms: term {
 		$<termLst>$ = toTermList($<trm>1, NULL);
 		//print_term_liste($<termLst>$);
 		}
-		| term COMMA terms { 
-		$<termLst>$=toTermList($<trm>1, $<termLst>3); 
+		| term COMMA terms {
+		$<termLst>$=toTermList($<trm>1, $<termLst>3);
 		}
 
 term: CONST {

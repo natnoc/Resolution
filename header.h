@@ -7,9 +7,9 @@ typedef struct clause_list{
 }clause_list;
 
 typedef struct clause{
-	struct atom* head;
+	//struct atom* head;
 	struct body* bd;
-	struct clause* next;
+	//struct clause* next;
 }clause;
 
 typedef struct body{
@@ -33,7 +33,9 @@ typedef struct term{
 }term;
 
 
-clause* toclause(atom* atm, body* bd, clause* next);
+//clause* toclause(atom* atm, body* bd, clause* next);
+clause_list* toClauseList(clause* claus, clause_list* next);
+clause* toclause(body* bd);
 atom* toAtom(char* prSym, term_list* trmList);
 term_list* toTermList(term* trm, term_list* next);
 term* toTerm(char* fOrC, term_list* arg);
@@ -44,4 +46,4 @@ char* print_term(term* trm);
 char* print_term_liste(term_list* trm_lst);
 char* print_atom(atom* atm);
 char* print_body(body* boy);
-
+char* print_clause(clause* claus);

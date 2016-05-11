@@ -3,13 +3,33 @@
 #include <stdio.h>
 #include <string.h>
 
-clause* toclause(atom* atm, body* bd, clause* next){
+/*clause* toclause(atom* atm, body* bd, clause* next){
 	clause* claus;
 	claus = malloc (sizeof(clause));
 
 	claus->head = atm;
 	claus->bd = bd;
 	claus->next = next;
+
+	return claus;
+}*/
+
+clause_list* toClauseList(clause* claus, clause_list* next) {
+	clause_list* clslst;
+	clslst = malloc(sizeof(clause_list));
+
+	clslst->claus = claus;
+	clslst->next = next;
+
+	return clslst;
+}
+
+
+clause* toclause(body* bd) {
+	clause* claus;
+	claus = malloc (sizeof(clause));
+
+	claus->bd = bd;
 
 	return claus;
 }
@@ -93,5 +113,12 @@ char* print_body(body* boy){
 	while (boy != NULL) {
 		print_atom(boy->head);
 		boy = boy->next;
+	}
+}
+
+char* print_clause(clause* claus) {
+	puts ("print clause");
+	if (claus != NULL) {
+		print_body(claus->bd);
 	}
 }
