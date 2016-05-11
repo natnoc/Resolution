@@ -40,3 +40,8 @@ term* toTerm(char* fOrC, term_list* arg);
 //function* toFunction(char* fOrC, term_list* arg, function* next);
 body* tobody(atom* head, body* bd);
 
+char* print_term(term* trm);
+char* print_term_liste(term_list* trm_lst);
+char* print_atom(atom* atm);
+char* print_body(body* boy);
+

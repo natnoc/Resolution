@@ -65,14 +65,33 @@ body* tobody(atom* head, body* bd){
 }
 
 char* print_term(term* trm) {
+	puts ("print term");
 	if (trm != NULL) {
-		printf("Term: %s\n", trm->fOrConst);
+		printf("Symbol: %s\n", trm->fOrConst);
+		print_term_liste(trm->argm);
 	}
 }
 
 char* print_term_liste(term_list* trm_lst) {
+	puts ("print term liste");
 	while (trm_lst != NULL) {
 		print_term(trm_lst->trm);
 		trm_lst = trm_lst->next;
+	}
+}
+
+char* print_atom(atom* atm) {
+	puts ("print atom");
+	if (atm != NULL) {
+		printf("PredSymbol: %s\n", atm->predSym);
+		print_term_liste(atm->trm_lst);
+	}
+}
+
+char* print_body(body* boy){
+	puts ("\nprint body");
+	while (boy != NULL) {
+		print_atom(boy->head);
+		boy = boy->next;
 	}
 }

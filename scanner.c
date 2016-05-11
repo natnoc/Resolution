@@ -383,7 +383,7 @@ struct yy_trans_info
 static yyconst flex_int16_t yy_accept[33] =
     {   0,
         0,    0,   15,   13,   11,   12,    7,    5,    6,    4,
-       13,    3,    3,    3,    1,    1,    2,    2,    8,    0,
+       13,    3,    3,    3,    2,    2,    1,    1,    8,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    9,    0,
        10,    0
     } ;
@@ -761,7 +761,7 @@ case 1:
 YY_RULE_SETUP
 #line 22 "TokenScanner.l"
 {
-  printf("CONST: %s\n",yytext);
+  //printf("CONST: %s\n",yytext);
    yylval.name = strdup(yytext); return(CONST);
 }
 	YY_BREAK
@@ -769,7 +769,7 @@ case 2:
 YY_RULE_SETUP
 #line 27 "TokenScanner.l"
 {
-  printf("FUNCT: %s\n",yytext);
+  //printf("FUNCT: %s\n",yytext);
 	 yylval.name = strdup(yytext); return(FUNCT);
 }
 	YY_BREAK
@@ -777,7 +777,7 @@ case 3:
 YY_RULE_SETUP
 #line 31 "TokenScanner.l"
 {
-  printf("RELATION: %s\n",yytext);
+  //printf("RELATION: %s\n",yytext);
 	yylval.name = strdup(yytext); return(RELATION);
 }
 	YY_BREAK
@@ -792,7 +792,7 @@ case 5:
 YY_RULE_SETUP
 #line 38 "TokenScanner.l"
 {
-  printf("OPENPAR: %s\n",yytext);
+  //printf("OPENPAR: %s\n",yytext);
   return OPENPAR;
 }
 	YY_BREAK
@@ -800,7 +800,7 @@ case 6:
 YY_RULE_SETUP
 #line 42 "TokenScanner.l"
 {
-  printf("CLOSEPAR: %s\n",yytext);
+  //printf("CLOSEPAR: %s\n",yytext);
   return CLOSEPAR;
 }
 	YY_BREAK
@@ -808,7 +808,7 @@ case 7:
 YY_RULE_SETUP
 #line 46 "TokenScanner.l"
 {
-  printf("AND: %s\n",yytext);
+  //printf("AND: %s\n",yytext);
 	return AND;
 }
 	YY_BREAK
@@ -823,7 +823,7 @@ case 9:
 YY_RULE_SETUP
 #line 53 "TokenScanner.l"
 {
-  printf("TRUE: %s\n",yytext);
+  //printf("TRUE: %s\n",yytext);
 	return TRUE;
 }
 	YY_BREAK
@@ -831,7 +831,7 @@ case 10:
 YY_RULE_SETUP
 #line 57 "TokenScanner.l"
 {
-  printf("FALSE: %s\n",yytext);
+  //printf("FALSE: %s\n",yytext);
   return FALSE;
 }
 	YY_BREAK

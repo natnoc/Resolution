@@ -14,6 +14,7 @@
 	struct clause* claus;
 	struct atom* atm;
 	struct term_list* termLst;
+
 	struct term* trm;
 	struct body* bd;
 
@@ -48,28 +49,53 @@ formseq: /* Empty */
     | form  NEWLINE formseq {}
     | error NEWLINE formseq {};  /* After an error, start afresh */
 
-form: left IMPL right
+form: left IMPL right {}
 
-right: atom | FALSE
+right: atom {
+			//$<bd>$ = tobody($<atm>1, NULL);
+			//print_body($<bd>$);
+		}
+		| FALSE {}
 
-left: conj | TRUE
+left: conj {
 
-conj: atom | conj AND atom
+		} | TRUE {}
 
-atom: RELATION | RELATION OPENPAR terms CLOSEPAR
+conj: atom {
+			$<bd>$ = tobody($<atm>1, NULL);
+			print_body($<bd>$);
+		}
+		| atom AND conj {
+			$<bd>$ = tobody($<atm>1, $<bd>3);
+			print_body($<bd>$);		
+		}
+
+atom: RELATION {
+			$<atm>$ = toAtom($<name>1, NULL);
+			print_atom($<atm>$);
+		}
+		| RELATION OPENPAR terms CLOSEPAR {
+			$<atm>$ = toAtom($<name>1, $<termLst>3);
+			print_atom($<atm>$);
+		}
 
 terms: term {
-		$<termLst>$=toTermList($<trm>$, NULL);
-		print_term_liste($<termLst>$);
+		$<termLst>$ = toTermList($<trm>1, NULL);
+		//print_term_liste($<termLst>$);
 		}
-		| term COMMA terms
+		| term COMMA terms { 
+		$<termLst>$=toTermList($<trm>1, $<termLst>3); 
+		}
 
 term: CONST {
-			printf("\nConstant:\t%s\n", $<name>1);
+			//printf("\nConstant:\t%s\n", $<name>1);
 			$<trm>$=toTerm($<name>1, NULL);
-			print_term($<trm>$);
+			//print_term($<trm>$);
 		} |
 		FUNCT OPENPAR terms CLOSEPAR {
+			//printf("\nFunction:\t%s\n", $<name>1);
+			$<trm>$=toTerm($<name>1, $<termLst>3);
+			//print_term($<trm>$);
 		}
 
 %%
