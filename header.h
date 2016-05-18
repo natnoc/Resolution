@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct clause_list{
 	struct clause* claus;
@@ -47,3 +48,11 @@ char* print_term_liste(term_list* trm_lst);
 char* print_atom(atom* atm);
 char* print_body(body* boy);
 char* print_clause(clause* claus);
+
+bool comp_atom(atom* atm1, atom* atm2);
+bool comp_termList(term_list* trmL1, term_list* trmL2);
+bool comp_term(term* trm1, term* trm2);
+bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list);
+bool comp_body(body* bd1, body* bd2);
+clause* mergeClauses(clause* ziel_claus, clause* regel_claus);
+void appendClauseList(clause_list* claus_list, clause* claus);

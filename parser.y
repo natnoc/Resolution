@@ -52,7 +52,7 @@ formseq: /* Empty */
 
 form: left IMPL right {
 		printf("\nFormel eingelesen!\n");
-
+		//comp_atom($<claus>$->bd->head,$<claus>$->bd->next->head);
 		//Wenn linke Seite = true
 		if($<bd>1 == NULL) {
 
@@ -139,6 +139,7 @@ int main (int argc, char* argv[])
       yyin = fopen( argv[0], "r" );
    else
       yyin = stdin;
+
 
   return yyparse();
 }

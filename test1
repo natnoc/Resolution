@@ -1,1 +1,1 @@
-R(a) & R(b) & P(x(a,b),y(b)) -> P(a,b)
+T(f(g(x,y),y)) & R(f(g(x,y),y)) -> FALSE
