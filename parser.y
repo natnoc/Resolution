@@ -140,6 +140,11 @@ int main (int argc, char* argv[])
    else
       yyin = stdin;
 
+  yyparse();
+	
+  puts("-------------\n Starte Lösen\n-----------------");
+  loeseFormel(ziel_claus_list, regel_claus_list);
+  puts("\nFertig ;D\n");
+  return 1;
 
-  return yyparse();
 }

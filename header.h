@@ -34,7 +34,7 @@ typedef struct term{
 }term;
 
 
-//clause* toclause(atom* atm, body* bd, clause* next);
+void addAtomToClause(atom* atm, clause* clause);
 clause_list* toClauseList(clause* claus, clause_list* next);
 clause* toclause(body* bd);
 atom* toAtom(char* prSym, term_list* trmList);
@@ -55,4 +55,4 @@ bool comp_term(term* trm1, term* trm2);
 bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list);
 bool comp_body(body* bd1, body* bd2);
 clause* mergeClauses(clause* ziel_claus, clause* regel_claus);
-void appendClauseList(clause_list* claus_list, clause* claus);
+void appendClauseList(clause_list** claus_list, clause* claus);

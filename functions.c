@@ -4,16 +4,20 @@
 #include <string.h>
 #include <stdbool.h>
 
-/*clause* toclause(atom* atm, body* bd, clause* next){
-	clause* claus;
-	claus = malloc (sizeof(clause));
+void addAtomToClause(atom* atm, clause* clause){
+	body* pntr = NULL;
+	body* body = NULL;
 
-	claus->head = atm;
-	claus->bd = bd;
-	claus->next = next;
+	// Copy atom into body
+	body = malloc (sizeof(body));
+	body->head = atm;
 
-	return claus;
-}*/
+	// Append body to front of linked list of body´s
+	pntr = clause->bd;
+	clause->bd = body;
+	clause->bd->next = pntr;
+	
+}
 
 clause_list* toClauseList(clause* claus, clause_list* next) {
 	clause_list* clslst;
@@ -168,10 +172,10 @@ bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list) {
 		clause_list* regel_claus_list_tmp = regel_claus_list;
 		while(regel_claus_list_tmp != NULL) { // Überprüfe je RegelKlausel mit den ZielKlauseln
 			printf("   RegelKlausel: ");
-			//print_clause(regel_claus_list_tmp->claus);
 			clause* ziel_claus = ziel_claus_list->claus;
 			if(ziel_claus == NULL) { // Leere Klausel erkannt -> nicht erfüllbar
 				printf("    Leere ZielKlausel erkannt!");
+				puts("\n FALSCH");
 				return false;
 			} else { // Klausel hat Literale -> Überprüfe ob neue ZielKlausel gebildet werden kann
 				while(ziel_claus != NULL) {
@@ -179,61 +183,52 @@ bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list) {
 
 					// Prüfen ob Klauseln ungleich, dann mergen und anhängen
 					if(!comp_body(ziel_claus->bd, regel_claus->bd)) {
+						clause_list* lastElem = ziel_claus_list;
 						clause* newZielClaus = mergeClauses(ziel_claus, regel_claus);
-						appendClauseList(ziel_claus_list, newZielClaus);
+						
+						// letztes Element finden und neue Klausel anhängen
+						while(lastElem != NULL) {lastElem = lastElem->next;}
+						appendClauseList(&lastElem, newZielClaus);
 				
-						/*if(ziel_claus->lit->sign != regel_claus->lit->sign) {
-							clause* new_ziel_claus = mergeClauses(ziel_claus_list->claus,regel_claus_list_tmp->claus, ziel_claus->lit->val);
-
-							if(!checkForLoop(ziel_claus_list_anfang, new_ziel_claus)) {
-								printf("    neue ZielKlausel: ");
-								print_clause(new_ziel_claus);
-								appendClauseList(ziel_claus_list, new_ziel_claus);
-							} else {
-								printf("   Loop erkannt!\n");
-							}
-						}*/
+						// HIER WAR CHECKLOOP DRIN, ABER UMGANGEN DURCH HINTEN ANHÄNGEN
 					}
-					clause_list* temp = NULL;
-					clause* tempC = NULL;
-					temp = ziel_claus_list;
-					while(temp->claus != (clause*) ziel_claus) {
-						if(temp->claus == ziel_claus) {
-							tempC = temp->next;		
-							break;
-						}					
-					}
-					ziel_claus = tempC;
+					// Nächstes Klausel Element nehmen
+					clause_list* tmp_pntr = ziel_claus_list;
+					while(tmp_pntr->claus != ziel_claus) {tmp_pntr = tmp_pntr->next;}
+					ziel_claus = tmp_pntr->next->claus;
 				}
 			}
 			regel_claus_list_tmp = regel_claus_list_tmp->next;
 		}
 		ziel_claus_list = ziel_claus_list->next;
 	}
+	puts("wahr");
 	return true;
 }
 
 clause* mergeClauses(clause* ziel_claus, clause* regel_claus) {
-	clause* new_claus = NULL;
 	puts("angekommen in merge\n");
+	// Neue Klausel erstellen
+	clause* new_claus = (clause*) malloc(sizeof(clause));
+
 
 	// Ziel Klausel durchlaufen
 	body* bd = ziel_claus->bd;
 	while(bd != NULL) {
+		// Jedes unterschiedliche Atom hinzufügen
 		if(!comp_atom(bd->head, regel_claus->bd->head)) {
-				new_claus = toclause(bd->head, new_claus);
+				addAtomToClause(bd->head, new_claus);
 		}
 		bd = bd->next;
 	}
 	
 	// Regel Klausel durchlaufen
-	while(regel_claus != NULL) {
-		body* bd = regel_claus->next;
-		while(bd != NULL) {
-			if(!(comp_atom(bd->head, ziel_claus->bd->head)) {
-				new_claus = toclause(bd->head, new_claus);
-			}
+	bd = regel_claus->bd;
+	while(bd != NULL) {
+		if(!comp_atom(bd->head, ziel_claus->bd->head)) {
+			addAtomToClause(bd->head, new_claus);
 		}
+		bd = bd->next;
 	}
 
 	return new_claus;
@@ -241,7 +236,7 @@ clause* mergeClauses(clause* ziel_claus, clause* regel_claus) {
 
 
 bool comp_body(body* bd1, body* bd2){
-	if(!(comp_atom(bd1->head,bd2->head)){
+	if(!(comp_atom(bd1->head,bd2->head))){
 		return false;
 	}
 	if(!(bd1->next == NULL && bd2->next == NULL)){
@@ -251,10 +246,12 @@ bool comp_body(body* bd1, body* bd2){
 }
 
 
-void appendClauseList(clause_list* claus_list, clause* claus) {
-	clause_list* next_pointer = claus_list;
-	while(claus_list != NULL) {
-		next_pointer = next_pointer->next;
-	}
-	next_pointer->next = claus;
+void appendClauseList(clause_list** lastElem, clause* claus) {
+	clause_list* newList = NULL;
+	// Create new clause list element	
+	newList = (clause_list*) malloc(sizeof(clause_list));
+	newList->claus = claus;
+	
+	// Add next Item for last Element
+	(*lastElem)->next = newList;	
 }
