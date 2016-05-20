@@ -148,19 +148,18 @@ int main (int argc, char* argv[])
   yyparse();
 	
   puts("-------------\n Starte Lösen\n-----------------");
-  clause_list* ziel_claus_list_tmp = regel_claus_list;
-  /*while(ziel_claus_list_tmp != NULL){
-  	print_clause(ziel_claus_list_tmp->claus);
-	ziel_claus_list_tmp = ziel_claus_list_tmp->next;
-	
-  }
-  loeseFormel(ziel_claus_list, regel_claus_list);*/
+  
+  
+  /*
+ clause_list* ziel_claus_list_tmp = regel_claus_list; 
  while(ziel_claus_list_tmp != NULL){
   	//print_clause(ziel_claus_list_tmp->claus);
 	puts("Keine Lust mehr");
-	ziel_claus_list_tmp = ziel_claus_list_tmp->next;
-	
-  }
+	ziel_claus_list_tmp = ziel_claus_list_tmp->next;	
+  }*/
+  
+  loeseFormel(ziel_claus_list, regel_claus_list);
+  
   puts("\nFertig ;D\n");
   return 1;
 

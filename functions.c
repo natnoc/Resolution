@@ -4,20 +4,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-/*void addAtomToClause(atom* atm, clause* clause){
-	body* pntr = NULL;
-	body* body = NULL;
 
-	// Copy atom into body
-	body = malloc (sizeof(body));
-	body->head = atm;
-
-	// Append body to front of linked list of body´s
-	pntr = clause->bd;
-	clause->bd = body;
-	clause->bd->next = pntr;
-	
-}*/
 
 clause_list* toClauseList(clause* claus, clause_list* next) {
 	
@@ -31,22 +18,22 @@ clause_list* toClauseList(clause* claus, clause_list* next) {
 }
 
 atom_list* toAtomList(atom* atm, atom_list* next){
-	atom_list* atmList;
-	atmList = malloc(sizeof(atom_list));
+	atom_list* atomList;
+	atomList = malloc(sizeof(atom_list));
 
-	atmList->atm = atm;
-	atmList->next = next;
+	atomList->atm = atm;
+	atomList->next = next;
 
-	return atmList;		
+	return atomList;		
 }
 
 
-clause* toclause(atom_list* atmList, atom* atm) {
+clause* toclause(atom_list* atomList, atom* atm) {
 	clause* claus;
 	claus = malloc (sizeof(clause));
 
 	claus->head = atm;
-	claus->tail = atmList;
+	claus->tail = atomList;
 
 	return claus;
 }
@@ -112,16 +99,47 @@ char* print_clause(clause* claus) {
 	}
 }*/
 
-bool comp_atom(atom* atm1, atom* atm2){
-	puts("angekommen in comp_atom\n");
-	//Predikatensymbol vergleichen
-	if(strcmp(atm1->predSym,atm2->predSym) == 0){
-		puts("predSym gleich\n");
-		comp_termList(atm1->trm_lst,atm2->trm_lst);
+bool comp_clause(clause* c1, clause* c2) {
+	puts("\nangekommen in comp_clause");
+	// Überprüfen Atom und dann Atomliste
+	if(comp_atom(c1->head, c2->head)) {
+		if(comp_atomList(c1->tail, c2->tail)) {
+			return true;
+		}
 	}
+	return false;
+}
+
+bool comp_atomList(atom_list* l1, atom_list* l2) {
+	puts("\n angekommen in comp_atomList");
+	if(!comp_atom(l1->atm,l2->atm)){
+		return false;
+	}
+	if(l1->next == NULL && l2->next == NULL){
+		return true;
+	}	
+	return comp_atomList(l1->next, l2->next);
+return false;
+}
+
+bool comp_atom(atom* atm1, atom* atm2){	
+	puts("\nangekommen in comp_atom");
+	if(atm1 == NULL && atm2 == NULL) {
+		return true;
+	}
+
+	//TODO: Bei dem STRCMP bzw Referenz auf predSym kommt seg fault!
+	
+	//Predikatensymbol und Terme vergleichen
+	if(strcmp(atm1->predSym,atm2->predSym) == 0){
+		puts("\npredSym gleich");
+		return comp_termList(atm1->trm_lst,atm2->trm_lst);
+	}
+	return false;
 }
 
 bool isInAtomList(atom* atm, atom_list* atomList){
+	puts("\n angekommen in inAtomList");
 	atom_list* temp = atomList;
 	while(temp != NULL){
 		if(comp_atom(atm,temp->atm)){
@@ -133,14 +151,15 @@ bool isInAtomList(atom* atm, atom_list* atomList){
 }
 
 bool comp_termList(term_list* trmL1, term_list* trmL2){
-	puts("angekommen in comp_termList\n");
-	if(!comp_term(trmL1->trm,trmL2->trm)){
-		puts("term (hat rekursiv Termliste) ungleich \n");
-		return false;
-	}
+	puts("\nangekommen in comp_termList");
 	if(trmL1->next == NULL && trmL2->next == NULL){
 		return true;
 	}
+	
+	if(!comp_term(trmL1->trm,trmL2->trm)){
+		return false;
+	}
+
 	return comp_termList(trmL1->next, trmL2->next);
 return false;
 }
@@ -148,56 +167,59 @@ return false;
 bool comp_term(term* trm1, term* trm2){
 	puts("angekommen in comp_term\n");
 	if(strcmp(trm1->fOrConst,trm2->fOrConst) == 0){
-		if(trm1->argm == NULL && trm2->argm == NULL){
-			
+		if(trm1->argm == NULL && trm2->argm == NULL){			
 			return true;
-		}
-		
+		}		
 		return comp_termList(trm1->argm,trm2->argm);
 	}
 puts("const von Term ungleich\n");
 return false;
 }
 
-/*bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list) {
-	clause_list* ziel_claus_list_anfang = ziel_claus_list;
+bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list) {
+	if(ziel_claus_list==NULL) puts(" Zielclauselist null");
+	if(regel_claus_list==NULL) puts(" Regelclauselist null");
+	
+	clause_list* ziel_claus_list_anfang = ziel_claus_list;	
 	while(ziel_claus_list != NULL) { // Solange ZielKlauseln vorhanden sind
-		printf("   ZielKlausel: ");
-		//print_clause(ziel_claus_list->claus);
+		printf("\n   ZielKlausel: ");
 		clause_list* regel_claus_list_tmp = regel_claus_list;
 		while(regel_claus_list_tmp != NULL) { // Überprüfe je RegelKlausel mit den ZielKlauseln
-			printf("   RegelKlausel: ");
+			printf("\n   RegelKlausel: ");
 			clause* ziel_claus = ziel_claus_list->claus;
 			if(ziel_claus == NULL) { // Leere Klausel erkannt -> nicht erfüllbar
-				printf("    Leere ZielKlausel erkannt!");
+				printf("\n    Leere ZielKlausel erkannt!");
 				puts("\n FALSCH");
 				return false;
 			} else { // Klausel hat Literale -> Überprüfe ob neue ZielKlausel gebildet werden kann
 				while(ziel_claus != NULL) {
-					clause* regel_claus = regel_claus_list_tmp->claus;
+					// Nächstes Klausel Element markieren
+					clause_list* tmp_pntr = ziel_claus_list;
+					while(tmp_pntr->claus != ziel_claus) {
+						tmp_pntr = tmp_pntr->next;
+					}
+					tmp_pntr = tmp_pntr->next;
 
 					// Prüfen ob Klauseln ungleich, dann mergen und anhängen
-					if(!comp_body(ziel_claus->bd, regel_claus->bd)) {
-						clause_list* lastElem = ziel_claus_list;
+					clause* regel_claus = regel_claus_list_tmp->claus;
+					if(!comp_clause(ziel_claus, regel_claus)) {
+						// Neue Klausel erstellen und vorn anhängen
 						clause* newZielClaus = mergeClauses(ziel_claus, regel_claus);
+						regel_claus_list = toClauseList(newZielClaus, regel_claus_list);
 						
-						// letztes Element finden und neue Klausel anhängen
-						while(lastElem != NULL) {lastElem = lastElem->next;}
-						appendClauseList(&lastElem, newZielClaus);
-				
-						// HIER WAR CHECKLOOP DRIN, ABER UMGANGEN DURCH HINTEN ANHÄNGEN
+						// Pointer wieder auf Start setzen, da Klausel neu
+						tmp_pntr = ziel_claus_list;						
 					}
-					// Nächstes Klausel Element nehmen
-					clause_list* tmp_pntr = ziel_claus_list;
-					while(tmp_pntr->claus != ziel_claus) {tmp_pntr = tmp_pntr->next;}
-					ziel_claus = tmp_pntr->next->claus;
+					
+					// Entweder zum nächsten Klauselement oder zum Start gehen
+					ziel_claus = tmp_pntr->claus;
 				}
 			}
 			regel_claus_list_tmp = regel_claus_list_tmp->next;
 		}
 		ziel_claus_list = ziel_claus_list->next;
 	}
-	puts("wahr");
+	puts("\nwahr");
 	return true;
 }
 
@@ -208,46 +230,24 @@ clause* mergeClauses(clause* ziel_claus, clause* regel_claus) {
 
 
 	// Ziel Klausel durchlaufen
-	body* bd = ziel_claus->bd;
-	while(bd != NULL) {
+	atom_list* current = ziel_claus->tail;
+	while(current != NULL) {
 		// Jedes unterschiedliche Atom hinzufügen
-		if(!comp_atom(bd->head, regel_claus->bd->head)) {
-				addAtomToClause(bd->head, new_claus);
+		if(!comp_atom(current->atm, regel_claus->head)) {
+				new_claus->tail = toAtomList(current->atm, new_claus->tail);
 		}
-		bd = bd->next;
+		current = current->next;
 	}
 	
 	// Regel Klausel durchlaufen
-	bd = regel_claus->bd;
-	while(bd != NULL) {
-		if(!comp_atom(bd->head, ziel_claus->bd->head)) {
-			addAtomToClause(bd->head, new_claus);
+	current = regel_claus->tail;
+	while(current != NULL) {
+		// Jedes unterschiedliche Atom hinzufügen
+		if(!comp_atom(current->atm, ziel_claus->head)) {
+			new_claus->tail = toAtomList(current->atm, new_claus->tail);
 		}
-		bd = bd->next;
+		current = current->next;
 	}
 
 	return new_claus;
 }
-
-
-bool comp_body(body* bd1, body* bd2){
-	if(!(comp_atom(bd1->head,bd2->head))){
-		return false;
-	}
-	if(!(bd1->next == NULL && bd2->next == NULL)){
-		return true;
-	}
-	return comp_body(bd1->next,bd2->next);
-}
-
-
-void appendClauseList(clause_list** lastElem, clause* claus) {
-	clause_list* newList = NULL;
-	// Create new clause list element	
-	newList = (clause_list*) malloc(sizeof(clause_list));
-	newList->claus = claus;
-	
-	// Add next Item for last Element
-	(*lastElem)->next = newList;	
-}*/
-

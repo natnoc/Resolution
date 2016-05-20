@@ -7,7 +7,6 @@ typedef struct clause_list{
 	struct clause_list* next;
 }clause_list;
 
-
 typedef struct clause{
 	struct atom* head;
 	struct atom_list* tail;
@@ -49,9 +48,10 @@ char* print_atom(atom* atm);
 char* print_clause(clause* claus);
 
 bool comp_atom(atom* atm1, atom* atm2);
+bool comp_atomList(atom_list* atm1, atom_list* atm2);
 bool comp_termList(term_list* trmL1, term_list* trmL2);
 bool comp_term(term* trm1, term* trm2);
+bool comp_clause(clause* c1, clause* c2);
 bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list);
 clause* mergeClauses(clause* ziel_claus, clause* regel_claus);
 void appendClauseList(clause_list** claus_list, clause* claus);
-bool isZielClause(clause* claus);
