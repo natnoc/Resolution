@@ -15,7 +15,7 @@
 	struct atom* atm;
 	struct term_list* termLst;
 	struct term* trm;
-	struct body* bd;
+	struct atom_list* atmList;
 }
 
 
@@ -45,69 +45,59 @@ start: formseq {
 formseq: /* Empty */
     | form  NEWLINE formseq {
 
-		if($<claus>1->bd->isZielClause) {
-			clause_list* cl_new = toClauseList($<claus>1, ziel_claus_list);
-			ziel_claus_list = cl_new;
-		} else {
-			clause_list* cl_new = toClauseList($<claus>1, regel_claus_list);
-			regel_claus_list = cl_new;
 		}
-
-
-
-
-			//clause_list* clsLst = toClauseList($<claus>1, regel_claus_list);
-			//regel_claus_list = clsLst;
-		}
-		| NEWLINE formseq       {}
-    | error NEWLINE formseq {};  /* After an error, start afresh */
+	| NEWLINE formseq       {}
+    	| error NEWLINE formseq {};  /* After an error, start afresh */
 
 form: left IMPL right {
-		printf("\nFormel eingelesen!\n");
-		//comp_atom($<claus>$->bd->head,$<claus>$->bd->next->head);
-		//Wenn linke Seite = true
-		if($<bd>1 == NULL) {
+			printf("\nFormel eingelesen!\n");
+
+
+			$<claus>$ = toclause($<atmList>1,$<atm>3);
+
 		
-			$<bd>$ = $<bd>1;
-		
-		} else {
-			//Wenn rechte Seite = false
-			if ($<bd>3 == NULL) {
-				$<bd>$->isZielClause = TRUE;
-			//Wenn beide Seiten Formeln enthalten
+
+			if($<claus>$->head == NULL) {
+				ziel_claus_list = toClauseList($<claus>$, ziel_claus_list);
 			} else {
-				//$<bd>3->next = $<bd>1;
-				//$<bd>$ = $<bd>3->next;
-			}
-		}
+					regel_claus_list = toClauseList($<claus>$, regel_claus_list);
+				}
+
 		}
 
 right: atom {
-			$<bd>$ = tobody($<atm>1, NULL);
+			$<atm>$ = $<atm>1;
+			//$<bd>$ = tobody($<atm>1, $<bd>$);
 			printf("\nRechts:\t");
-			print_body($<bd>$);
+			//print_body($<bd>$);
 		}
 		| FALSE {
 			printf("False");
-			$<bd>$ = NULL;
+			//$<bd>$ = tobody(NULL, $<bd>$);
+			//$<bd>$->isZielClause = TRUE;
+			
+			$<atm>$ = NULL;
 		}
 
 left: conj {
 			printf("\nLinks:\t");
-			$<claus>$ = toclause($<bd>1);
-			print_clause($<claus>$);
+			//$<claus>$ = toclause($<atmList>1, NULL);
+			$<atmList>$ = $<atmList>1;
+			//print_clause($<claus>$);
 		} | TRUE {
 			printf("True");
-			$<bd>$ = NULL;
+			$<atmList>$ = NULL;
 		}
 
 conj: atom {
-			$<bd>$ = tobody($<atm>1, NULL);
+			//$<bd>$ = tobody($<atm>1, NULL);
 			//print_body($<bd>$);
+			$<atmList>$ = toAtomList($<atm>1, NULL);
 		}
 		| atom AND conj {
-			$<bd>$ = tobody($<atm>1, $<bd>3);
+			//$<bd>$ = tobody($<atm>1, $<bd>3);
 			//print_body($<bd>$);
+			$<atmList>$ = toAtomList($<atm>1, $<atmList>3);
 		}
 
 atom: RELATION {
@@ -158,13 +148,19 @@ int main (int argc, char* argv[])
   yyparse();
 	
   puts("-------------\n Starte Lösen\n-----------------");
-  clause_list* ziel_claus_list_tmp = ziel_claus_list;
-  while(ziel_claus_list_tmp != NULL){
+  clause_list* ziel_claus_list_tmp = regel_claus_list;
+  /*while(ziel_claus_list_tmp != NULL){
   	print_clause(ziel_claus_list_tmp->claus);
 	ziel_claus_list_tmp = ziel_claus_list_tmp->next;
 	
   }
-  loeseFormel(ziel_claus_list, regel_claus_list);
+  loeseFormel(ziel_claus_list, regel_claus_list);*/
+ while(ziel_claus_list_tmp != NULL){
+  	//print_clause(ziel_claus_list_tmp->claus);
+	puts("Keine Lust mehr");
+	ziel_claus_list_tmp = ziel_claus_list_tmp->next;
+	
+  }
   puts("\nFertig ;D\n");
   return 1;
 

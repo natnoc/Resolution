@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-void addAtomToClause(atom* atm, clause* clause){
+/*void addAtomToClause(atom* atm, clause* clause){
 	body* pntr = NULL;
 	body* body = NULL;
 
@@ -17,9 +17,10 @@ void addAtomToClause(atom* atm, clause* clause){
 	clause->bd = body;
 	clause->bd->next = pntr;
 	
-}
+}*/
 
 clause_list* toClauseList(clause* claus, clause_list* next) {
+	
 	clause_list* clslst;
 	clslst = malloc(sizeof(clause_list));
 
@@ -29,12 +30,23 @@ clause_list* toClauseList(clause* claus, clause_list* next) {
 	return clslst;
 }
 
+atom_list* toAtomList(atom* atm, atom_list* next){
+	atom_list* atmList;
+	atmList = malloc(sizeof(atom_list));
 
-clause* toclause(body* bd) {
+	atmList->atm = atm;
+	atmList->next = next;
+
+	return atmList;		
+}
+
+
+clause* toclause(atom_list* atmList, atom* atm) {
 	clause* claus;
 	claus = malloc (sizeof(clause));
 
-	claus->bd = bd;
+	claus->head = atm;
+	claus->tail = atmList;
 
 	return claus;
 }
@@ -68,28 +80,8 @@ term* toTerm(char* fOrC, term_list* arg){
 
 	return trm;
 }
-/*function* toFunction(char* fOrC, term_list* arg, function* next){
-	function* funct;
-	funct = malloc (sizeof(function));
 
-	funct->fOrConst = fOrC;
-	funct->argm = arg;
-	funct->next = next;
-
-	return funct;
-}*/
-body* tobody(atom* head, body* bd){
-
-	body* boy;
-	boy = malloc (sizeof(body));
-
-	boy->head = head;
-	boy->next = bd;
-
-	return boy;
-}
-
-char* print_term(term* trm) {
+/*char* print_term(term* trm) {
 	puts ("print term");
 	if (trm != NULL) {
 		printf("Symbol: %s\n", trm->fOrConst);
@@ -113,20 +105,12 @@ char* print_atom(atom* atm) {
 	}
 }
 
-char* print_body(body* boy){
-	puts ("\nprint body");
-	while (boy != NULL) {
-		print_atom(boy->head);
-		boy = boy->next;
-	}
-}
-
 char* print_clause(clause* claus) {
 	puts ("print clause");
 	if (claus != NULL) {
 		print_body(claus->bd);
 	}
-}
+}*/
 
 bool comp_atom(atom* atm1, atom* atm2){
 	puts("angekommen in comp_atom\n");
@@ -135,6 +119,17 @@ bool comp_atom(atom* atm1, atom* atm2){
 		puts("predSym gleich\n");
 		comp_termList(atm1->trm_lst,atm2->trm_lst);
 	}
+}
+
+bool isInAtomList(atom* atm, atom_list* atomList){
+	atom_list* temp = atomList;
+	while(temp != NULL){
+		if(comp_atom(atm,temp->atm)){
+			return true;
+		}
+	temp = temp->next;
+	}
+	return false;
 }
 
 bool comp_termList(term_list* trmL1, term_list* trmL2){
@@ -164,7 +159,7 @@ puts("const von Term ungleich\n");
 return false;
 }
 
-bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list) {
+/*bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list) {
 	clause_list* ziel_claus_list_anfang = ziel_claus_list;
 	while(ziel_claus_list != NULL) { // Solange ZielKlauseln vorhanden sind
 		printf("   ZielKlausel: ");
@@ -254,5 +249,5 @@ void appendClauseList(clause_list** lastElem, clause* claus) {
 	
 	// Add next Item for last Element
 	(*lastElem)->next = newList;	
-}
+}*/
 

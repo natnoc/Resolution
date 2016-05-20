@@ -3,3 +3,6 @@ P(x,y) -> R (x)
 true -> P(y,x)
 P(a(x,y), z) -> false
 
+
+
+
