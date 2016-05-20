@@ -255,3 +255,4 @@ void appendClauseList(clause_list** lastElem, clause* claus) {
 	// Add next Item for last Element
 	(*lastElem)->next = newList;	
 }
+

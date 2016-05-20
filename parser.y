@@ -44,8 +44,20 @@ start: formseq {
 
 formseq: /* Empty */
     | form  NEWLINE formseq {
-			clause_list* clsLst = toClauseList($<claus>1, ziel_claus_list);
-			ziel_claus_list = clsLst;
+
+		if($<claus>1->bd->isZielClause) {
+			clause_list* cl_new = toClauseList($<claus>1, ziel_claus_list);
+			ziel_claus_list = cl_new;
+		} else {
+			clause_list* cl_new = toClauseList($<claus>1, regel_claus_list);
+			regel_claus_list = cl_new;
+		}
+
+
+
+
+			//clause_list* clsLst = toClauseList($<claus>1, regel_claus_list);
+			//regel_claus_list = clsLst;
 		}
 		| NEWLINE formseq       {}
     | error NEWLINE formseq {};  /* After an error, start afresh */
@@ -55,14 +67,17 @@ form: left IMPL right {
 		//comp_atom($<claus>$->bd->head,$<claus>$->bd->next->head);
 		//Wenn linke Seite = true
 		if($<bd>1 == NULL) {
-
+		
+			$<bd>$ = $<bd>1;
+		
 		} else {
 			//Wenn rechte Seite = false
 			if ($<bd>3 == NULL) {
-
+				$<bd>$->isZielClause = TRUE;
 			//Wenn beide Seiten Formeln enthalten
 			} else {
-
+				//$<bd>3->next = $<bd>1;
+				//$<bd>$ = $<bd>3->next;
 			}
 		}
 		}
@@ -143,6 +158,12 @@ int main (int argc, char* argv[])
   yyparse();
 	
   puts("-------------\n Starte Lösen\n-----------------");
+  clause_list* ziel_claus_list_tmp = ziel_claus_list;
+  while(ziel_claus_list_tmp != NULL){
+  	print_clause(ziel_claus_list_tmp->claus);
+	ziel_claus_list_tmp = ziel_claus_list_tmp->next;
+	
+  }
   loeseFormel(ziel_claus_list, regel_claus_list);
   puts("\nFertig ;D\n");
   return 1;

@@ -1,1 +1,1 @@
-T(f(g(x,y),y)) & R(f(g(x,y),y)) -> FALSE
+T(f(g(x,y),y)) & R(f(g(x,y),y)) -> F(x)

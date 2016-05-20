@@ -14,6 +14,7 @@ typedef struct clause{
 }clause;
 
 typedef struct body{
+	bool isZielClause;
 	struct atom* head;
 	struct body* next;
 }body;
@@ -56,3 +57,4 @@ bool loeseFormel(clause_list* ziel_claus_list, clause_list* regel_claus_list);
 bool comp_body(body* bd1, body* bd2);
 clause* mergeClauses(clause* ziel_claus, clause* regel_claus);
 void appendClauseList(clause_list** claus_list, clause* claus);
+bool isZielClause(clause* claus);
